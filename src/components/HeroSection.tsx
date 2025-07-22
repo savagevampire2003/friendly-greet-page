@@ -1,72 +1,100 @@
-import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-bg.jpg";
-import waveIcon from "@/assets/wave-icon.png";
+
+import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Upload, Brain, Shield } from 'lucide-react';
 
 const HeroSection = () => {
+  const { language, t, isRTL } = useLanguage();
+
+  const scrollToUpload = () => {
+    const uploadSection = document.getElementById('upload-section');
+    if (uploadSection) {
+      uploadSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToFeatures = () => {
+    const featuresSection = document.getElementById('features-section');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-bg">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      />
-      
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-hero opacity-20" />
-      
-      {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto animate-fade-in">
-        {/* Wave Icon */}
-        <div className="mb-8 animate-float">
-          <img 
-            src={waveIcon} 
-            alt="Welcome wave" 
-            className="w-24 h-24 mx-auto animate-glow"
-          />
+    <section className="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          {/* Main Heading */}
+          <h1 className={`text-4xl md:text-6xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'font-arabic' : ''}`}>
+            {t('welcomeTitle')}
+          </h1>
+          
+          {/* Subtitle */}
+          <p className={`text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto ${language === 'ar' ? 'font-arabic' : ''}`}>
+            {t('welcomeSubtitle')}
+          </p>
+
+          {/* CTA Buttons */}
+          <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+            <Button 
+              size="lg" 
+              className="medical-gradient text-white px-8 py-3 text-lg"
+              onClick={scrollToUpload}
+            >
+              <Upload className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              <span className={language === 'ar' ? 'font-arabic' : ''}>{t('getStarted')}</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="px-8 py-3 text-lg"
+              onClick={scrollToFeatures}
+            >
+              <span className={language === 'ar' ? 'font-arabic' : ''}>{t('learnMore')}</span>
+              <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
+            </Button>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="bg-white p-6 rounded-2xl shadow-lg medical-card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4 mx-auto">
+                <Brain className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className={`text-lg font-semibold text-gray-900 mb-2 ${language === 'ar' ? 'font-arabic' : ''}`}>
+                AI-Powered Analysis
+              </h3>
+              <p className={`text-gray-600 ${language === 'ar' ? 'font-arabic' : ''}`}>
+                Advanced machine learning algorithms for accurate medical image analysis
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl shadow-lg medical-card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 mx-auto">
+                <Shield className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className={`text-lg font-semibold text-gray-900 mb-2 ${language === 'ar' ? 'font-arabic' : ''}`}>
+                Secure & Private
+              </h3>
+              <p className={`text-gray-600 ${language === 'ar' ? 'font-arabic' : ''}`}>
+                Your medical data is encrypted and stored securely with privacy protection
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl shadow-lg medical-card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-4 mx-auto">
+                <Upload className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className={`text-lg font-semibold text-gray-900 mb-2 ${language === 'ar' ? 'font-arabic' : ''}`}>
+                Easy Upload
+              </h3>
+              <p className={`text-gray-600 ${language === 'ar' ? 'font-arabic' : ''}`}>
+                Simple drag-and-drop interface for uploading medical images
+              </p>
+            </div>
+          </div>
         </div>
-        
-        {/* Main Heading */}
-        <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-hero bg-clip-text text-transparent">
-          Hello, World!
-        </h1>
-        
-        {/* Subtitle */}
-        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-          Welcome to our beautiful corner of the internet. We're delighted you're here!
-        </p>
-        
-        {/* Call-to-Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button 
-            variant="default" 
-            size="lg"
-            className="bg-gradient-primary hover:shadow-[var(--shadow-glow)] transition-all duration-300 hover:scale-105 text-lg px-8 py-6"
-          >
-            Get Started
-          </Button>
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="border-primary/30 hover:bg-primary/10 hover:border-primary/60 transition-all duration-300 text-lg px-8 py-6"
-          >
-            Learn More
-          </Button>
-        </div>
-        
-        {/* Decorative Elements */}
-        <div className="mt-16 grid grid-cols-3 gap-8 max-w-md mx-auto opacity-60">
-          <div className="h-1 bg-gradient-primary rounded-full animate-pulse" />
-          <div className="h-1 bg-gradient-primary rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
-          <div className="h-1 bg-gradient-primary rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
-        </div>
-      </div>
-      
-      {/* Floating Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-primary/20 rounded-full animate-float" style={{ animationDelay: '0s' }} />
-        <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-primary-glow/30 rounded-full animate-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-1/3 left-1/3 w-5 h-5 bg-primary/15 rounded-full animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-2/3 right-1/3 w-2 h-2 bg-primary-glow/40 rounded-full animate-float" style={{ animationDelay: '1.5s' }} />
       </div>
     </section>
   );
