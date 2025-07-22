@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      doctor_registrations: {
+        Row: {
+          contact_phone: string
+          created_at: string
+          education_details: string
+          full_name: string
+          hospital_affiliation: string | null
+          id: string
+          medical_license_number: string
+          professional_bio: string | null
+          rejection_reason: string | null
+          specialization: string
+          specialty_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          years_of_experience: number
+        }
+        Insert: {
+          contact_phone: string
+          created_at?: string
+          education_details: string
+          full_name: string
+          hospital_affiliation?: string | null
+          id?: string
+          medical_license_number: string
+          professional_bio?: string | null
+          rejection_reason?: string | null
+          specialization: string
+          specialty_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          years_of_experience: number
+        }
+        Update: {
+          contact_phone?: string
+          created_at?: string
+          education_details?: string
+          full_name?: string
+          hospital_affiliation?: string | null
+          id?: string
+          medical_license_number?: string
+          professional_bio?: string | null
+          rejection_reason?: string | null
+          specialization?: string
+          specialty_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          years_of_experience?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_registrations_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doctor_registrations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
