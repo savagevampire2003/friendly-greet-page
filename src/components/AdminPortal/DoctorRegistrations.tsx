@@ -20,7 +20,7 @@ interface DoctorRegistration {
   education_details: string;
   status: string;
   rejection_reason?: string;
-  submitted_at: string;
+  created_at: string;
 }
 
 const DoctorRegistrations: React.FC = () => {
@@ -41,7 +41,7 @@ const DoctorRegistrations: React.FC = () => {
       const { data, error } = await supabase
         .from('doctor_registrations')
         .select('*')
-        .order('submitted_at', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       setRegistrations(data || []);

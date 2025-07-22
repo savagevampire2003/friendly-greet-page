@@ -12,7 +12,7 @@ interface DoctorRegistration {
   id: string;
   status: string;
   rejection_reason?: string;
-  submitted_at: string;
+  created_at: string;
 }
 
 const DoctorTabs: React.FC = () => {
@@ -32,7 +32,7 @@ const DoctorTabs: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('doctor_registrations')
-        .select('id, status, rejection_reason, submitted_at')
+        .select('id, status, rejection_reason, created_at')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -69,7 +69,7 @@ const DoctorTabs: React.FC = () => {
         <RegistrationStatus 
           status={registration.status}
           rejectionReason={registration.rejection_reason}
-          submittedAt={registration.submitted_at}
+          submittedAt={registration.created_at}
         />
       </div>
     );

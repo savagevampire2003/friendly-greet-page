@@ -8,8 +8,8 @@ interface RegistrationStatus {
   id: string;
   status: string;
   rejection_reason?: string;
-  submitted_at: string;
-  reviewed_at?: string;
+  created_at: string;
+  updated_at?: string;
 }
 
 const DoctorRegistrationStatus: React.FC = () => {
@@ -24,7 +24,7 @@ const DoctorRegistrationStatus: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('doctor_registrations')
-          .select('id, status, rejection_reason, submitted_at, reviewed_at')
+          .select('id, status, rejection_reason, created_at, updated_at')
           .eq('user_id', user.id)
           .single();
 
@@ -92,9 +92,9 @@ const DoctorRegistrationStatus: React.FC = () => {
         )}
 
         <div className="text-sm text-muted-foreground">
-          <p>Submitted: {new Date(registration.submitted_at).toLocaleDateString()}</p>
-          {registration.reviewed_at && (
-            <p>Reviewed: {new Date(registration.reviewed_at).toLocaleDateString()}</p>
+          <p>Submitted: {new Date(registration.created_at).toLocaleDateString()}</p>
+          {registration.updated_at && (
+            <p>Updated: {new Date(registration.updated_at).toLocaleDateString()}</p>
           )}
         </div>
       </div>

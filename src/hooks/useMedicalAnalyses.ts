@@ -59,12 +59,15 @@ export const useMedicalAnalyses = () => {
         .from('medical_analyses')
         .insert({
           user_id: user.id,
-          category,
+          analysis_type: category,
           file_name: fileName,
-          analysis_result: analysisResult,
-          confidence_score: confidenceScore,
-          response_language: responseLanguage,
-          file_url: fileUrl,
+          file_type: 'image',
+          analysis_result: {
+            analysis: analysisResult,
+            confidence: confidenceScore,
+            file_url: fileUrl,
+            response_language: responseLanguage
+          }
         })
         .select()
         .single();

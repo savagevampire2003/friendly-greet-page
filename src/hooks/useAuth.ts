@@ -28,7 +28,7 @@ export const useAuth = () => {
         .single();
 
       if (error) throw error;
-      setUserProfile(data);
+      setUserProfile(data as UserProfile);
     } catch (error) {
       console.error('Error fetching user profile:', error);
       setUserProfile(null);
@@ -42,6 +42,7 @@ export const useAuth = () => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        console.log('Auth state changed:', { user: session?.user, loading: false });
         
         // Fetch user profile when user signs in
         if (session?.user) {

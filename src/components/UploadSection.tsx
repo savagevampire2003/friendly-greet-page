@@ -234,15 +234,19 @@ const UploadSection = () => {
                 <AnalysisHistory history={analyses.map(analysis => ({
                   id: analysis.id,
                   date: analysis.created_at,
-                  category: analysis.category,
+                  category: analysis.analysis_type,
                   fileName: analysis.file_name,
                   result: {
                     diagnosis: typeof analysis.analysis_result === 'object' && analysis.analysis_result && 'analysis' in analysis.analysis_result 
                       ? (analysis.analysis_result as any).analysis 
                       : 'Analysis complete',
-                    confidence: analysis.confidence_score || 0
+                    confidence: typeof analysis.analysis_result === 'object' && analysis.analysis_result && 'confidence' in analysis.analysis_result 
+                      ? (analysis.analysis_result as any).confidence || 0
+                      : 0
                   },
-                  image: analysis.file_url
+                  image: typeof analysis.analysis_result === 'object' && analysis.analysis_result && 'file_url' in analysis.analysis_result 
+                    ? (analysis.analysis_result as any).file_url 
+                    : undefined
                 }))} />
               </div>
             )}
