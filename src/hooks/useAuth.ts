@@ -8,7 +8,8 @@ type UserProfile = {
   id: string;
   full_name: string | null;
   email: string | null;
-  role: string;
+  phone: string | null;
+  role: 'patient' | 'doctor' | 'admin' | null;
 };
 
 export const useAuth = () => {
