@@ -46,54 +46,14 @@ const DoctorSearch: React.FC = () => {
 
   const fetchDoctors = async () => {
     try {
-      // First get approved doctors
-      const { data: doctorData, error: doctorError } = await supabase
-        .from('doctor_registrations')
-        .select(`
-          id,
-          user_id,
-          full_name,
-          specialization,
-          specialty_id,
-          hospital_affiliation,
-          years_of_experience,
-          professional_bio,
-          education_details,
-          contact_phone,
-          specialties(name, description)
-        `)
-        .eq('status', 'approved');
+      const { data, error } = await supabase
+        .from('approved_doctors')
+        .select('*')
+        .order('full_name');
 
-      if (doctorError) throw doctorError;
+      if (error) throw error;
 
-      // Get user emails separately
-      const userIds = doctorData?.map(doctor => doctor.user_id) || [];
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .in('id', userIds);
-
-      if (profileError) throw profileError;
-
-      const transformedData = doctorData?.map(doctor => {
-        const profile = profileData?.find(p => p.id === doctor.user_id);
-        return {
-          id: doctor.id,
-          user_id: doctor.user_id,
-          full_name: doctor.full_name,
-          specialization: doctor.specialization,
-          specialty_name: doctor.specialties?.name || null,
-          specialty_description: doctor.specialties?.description || null,
-          hospital_affiliation: doctor.hospital_affiliation,
-          years_of_experience: doctor.years_of_experience,
-          professional_bio: doctor.professional_bio,
-          education_details: doctor.education_details,
-          contact_phone: doctor.contact_phone,
-          email: profile?.email || ''
-        };
-      }) || [];
-
-      setDoctors(transformedData);
+      setDoctors(data || []);
     } catch (error) {
       console.error('Error fetching doctors:', error);
       toast({
