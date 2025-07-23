@@ -5,6 +5,8 @@ import PatientQueue from './PatientQueue';
 import Profile from './Profile';
 import DoctorRegistrationForm from './DoctorRegistrationForm';
 import RegistrationStatus from './RegistrationStatus';
+import AvailabilitySettings from './AvailabilitySettings';
+import AppointmentCalendar from './AppointmentCalendar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -77,13 +79,21 @@ const DoctorTabs: React.FC = () => {
 
   // If approved, show full doctor portal
   return (
-    <Tabs defaultValue="dashboard" className="w-full mt-8">
+    <Tabs defaultValue="appointments" className="w-full mt-8">
       <TabsList className="mb-4">
+        <TabsTrigger value="appointments">Appointments</TabsTrigger>
+        <TabsTrigger value="availability">Availability</TabsTrigger>
         <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
         <TabsTrigger value="schedule">Schedule</TabsTrigger>
         <TabsTrigger value="queue">Patient Queue</TabsTrigger>
         <TabsTrigger value="profile">Profile</TabsTrigger>
       </TabsList>
+      <TabsContent value="appointments">
+        <AppointmentCalendar />
+      </TabsContent>
+      <TabsContent value="availability">
+        <AvailabilitySettings />
+      </TabsContent>
       <TabsContent value="dashboard">
         <div className="p-4">Welcome to your dashboard! (Today's stats, quick actions, etc.)</div>
       </TabsContent>

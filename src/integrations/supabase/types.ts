@@ -83,9 +83,12 @@ export type Database = {
           medical_license_number: string
           professional_bio: string | null
           rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           specialization: string
           specialty_id: string | null
           status: string
+          submitted_at: string
           updated_at: string
           user_id: string
           years_of_experience: number
@@ -100,9 +103,12 @@ export type Database = {
           medical_license_number: string
           professional_bio?: string | null
           rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           specialization: string
           specialty_id?: string | null
           status?: string
+          submitted_at?: string
           updated_at?: string
           user_id: string
           years_of_experience: number
@@ -117,9 +123,12 @@ export type Database = {
           medical_license_number?: string
           professional_bio?: string | null
           rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           specialization?: string
           specialty_id?: string | null
           status?: string
+          submitted_at?: string
           updated_at?: string
           user_id?: string
           years_of_experience?: number
