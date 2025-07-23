@@ -36,6 +36,8 @@ const AppointmentCalendar: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      console.log('Fetching appointments for doctor user:', user.id);
+
       // Get doctor registration
       const { data: doctorData, error: doctorError } = await supabase
         .from('doctor_registrations')
@@ -44,35 +46,54 @@ const AppointmentCalendar: React.FC = () => {
         .eq('status', 'approved')
         .single();
 
-      if (doctorError) throw doctorError;
+      if (doctorError) {
+        console.error('Doctor error:', doctorError);
+        throw doctorError;
+      }
 
-      // Get appointments for the selected date with patient profile data
+      console.log('Doctor data:', doctorData);
+
+      // Get appointments for the selected date
       const { data: appointmentsData, error: appointmentsError } = await supabase
         .from('appointments')
-        .select(`
-          *,
-          profiles(
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .eq('doctor_id', doctorData.id)
         .eq('appointment_date', selectedDate)
         .order('appointment_time');
 
-      if (appointmentsError) throw appointmentsError;
+      console.log('Raw appointments:', appointmentsData);
 
-      const transformedAppointments = appointmentsData?.map(apt => ({
-        id: apt.id,
-        patient_id: apt.patient_id,
-        appointment_date: apt.appointment_date,
-        appointment_time: apt.appointment_time,
-        status: apt.status,
-        notes: apt.notes || '',
-        patient_name: apt.profiles?.full_name || 'Unknown Patient',
-        patient_email: apt.profiles?.email || '',
-      })) || [];
+      if (appointmentsError) {
+        console.error('Appointments error:', appointmentsError);
+        throw appointmentsError;
+      }
 
+      // Fetch patient profiles separately
+      const transformedAppointments = [];
+      for (const apt of appointmentsData || []) {
+        console.log('Processing appointment:', apt.id, 'patient_id:', apt.patient_id);
+        
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('full_name, email')
+          .eq('id', apt.patient_id)
+          .single();
+
+        console.log('Profile data for patient', apt.patient_id, ':', profileData, profileError);
+
+        transformedAppointments.push({
+          id: apt.id,
+          patient_id: apt.patient_id,
+          appointment_date: apt.appointment_date,
+          appointment_time: apt.appointment_time,
+          status: apt.status,
+          notes: apt.notes || '',
+          patient_name: profileData?.full_name || 'Unknown Patient',
+          patient_email: profileData?.email || '',
+        });
+      }
+
+      console.log('Transformed appointments:', transformedAppointments);
       setAppointments(transformedAppointments);
     } catch (error) {
       console.error('Error fetching appointments:', error);
