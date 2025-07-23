@@ -78,6 +78,13 @@ export type Database = {
             foreignKeyName: "appointments_doctor_id_fkey"
             columns: ["doctor_id"]
             isOneToOne: false
+            referencedRelation: "doctor_profiles_with_availability"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
             referencedRelation: "doctor_registrations"
             referencedColumns: ["id"]
           },
@@ -211,6 +218,13 @@ export type Database = {
             columns: ["doctor_id"]
             isOneToOne: false
             referencedRelation: "approved_doctors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doctors_availability_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "doctor_profiles_with_availability"
             referencedColumns: ["id"]
           },
           {
@@ -375,6 +389,41 @@ export type Database = {
           education_details: string | null
           email: string | null
           full_name: string | null
+          hospital_affiliation: string | null
+          id: string | null
+          professional_bio: string | null
+          specialization: string | null
+          specialty_description: string | null
+          specialty_id: string | null
+          specialty_name: string | null
+          user_id: string | null
+          years_of_experience: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_registrations_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doctor_registrations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doctor_profiles_with_availability: {
+        Row: {
+          avg_consultation_fee: number | null
+          contact_phone: string | null
+          education_details: string | null
+          email: string | null
+          full_name: string | null
+          has_availability: boolean | null
           hospital_affiliation: string | null
           id: string | null
           professional_bio: string | null
