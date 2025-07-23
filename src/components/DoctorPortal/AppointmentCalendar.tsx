@@ -51,7 +51,7 @@ const AppointmentCalendar: React.FC = () => {
         .from('appointments')
         .select(`
           *,
-          profiles!inner(
+          profiles(
             full_name,
             email
           )
