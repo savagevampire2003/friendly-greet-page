@@ -56,8 +56,32 @@ const AvailabilitySettings: React.FC = () => {
       
       setDoctorId(doctorData.id);
 
-      // For now, initialize with empty array - the database schema exists but TypeScript types aren't updated yet
-      setAvailability([]);
+      // Try to fetch existing availability data
+      try {
+        const { data: availabilityData } = await supabase
+          .from('doctors_availability')
+          .select('*')
+          .eq('doctor_id', doctorData.id);
+
+        if (availabilityData && availabilityData.length > 0) {
+          // Map the database data to our interface
+          const mappedData = availabilityData.map((item: any) => ({
+            id: item.id,
+            day_of_week: item.day_of_week,
+            start_time: item.start_time,
+            end_time: item.end_time,
+            slot_duration_minutes: item.slot_duration_minutes,
+            consultation_fee: item.consultation_fee,
+            is_active: item.is_active
+          }));
+          setAvailability(mappedData);
+        } else {
+          setAvailability([]);
+        }
+      } catch (availabilityError) {
+        console.error('Error fetching availability:', availabilityError);
+        setAvailability([]);
+      }
 
     } catch (error) {
       console.error('Error fetching doctor data:', error);
@@ -100,8 +124,31 @@ const AvailabilitySettings: React.FC = () => {
     try {
       setLoading(true);
 
-      // For now, just show success message
-      // The actual database operations will work once types are updated
+      // First, delete existing availability for this doctor
+      await supabase
+        .from('doctors_availability')
+        .delete()
+        .eq('doctor_id', doctorId);
+
+      // Then insert new availability slots
+      if (availability.length > 0) {
+        const availabilityData = availability.map(slot => ({
+          doctor_id: doctorId,
+          day_of_week: slot.day_of_week,
+          start_time: slot.start_time,
+          end_time: slot.end_time,
+          slot_duration_minutes: slot.slot_duration_minutes,
+          consultation_fee: slot.consultation_fee,
+          is_active: slot.is_active
+        }));
+
+        const { error } = await supabase
+          .from('doctors_availability')
+          .insert(availabilityData);
+
+        if (error) throw error;
+      }
+
       toast({
         title: "Success",
         description: "Availability settings saved successfully",
@@ -111,7 +158,7 @@ const AvailabilitySettings: React.FC = () => {
       console.error('Error saving availability:', error);
       toast({
         title: "Error",
-        description: "Failed to save availability settings",
+        description: "Failed to save availability settings. Please try again.",
         variant: "destructive",
       });
     } finally {
