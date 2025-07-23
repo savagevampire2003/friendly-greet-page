@@ -34,7 +34,12 @@ const MyAppointments: React.FC = () => {
   const fetchAppointments = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log('No authenticated user found');
+        return;
+      }
+
+      console.log('Fetching appointments for user:', user.id);
 
       const { data: appointmentsData, error } = await supabase
         .from('appointments')
@@ -49,7 +54,13 @@ const MyAppointments: React.FC = () => {
         .order('appointment_date', { ascending: true })
         .order('appointment_time', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Appointments query error:', error);
+        throw error;
+      }
+
+      console.log('Raw appointments data:', appointmentsData);
+      console.log('Number of appointments found:', appointmentsData?.length || 0);
 
       const transformedAppointments = appointmentsData?.map(apt => ({
         id: apt.id,
