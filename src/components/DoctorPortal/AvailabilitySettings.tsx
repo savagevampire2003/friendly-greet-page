@@ -56,8 +56,8 @@ const AvailabilitySettings: React.FC = () => {
       
       setDoctorId(doctorData.id);
 
-      // For now, just initialize with empty array due to type issues
-      // The types will be updated in next deployment
+      // For now, just initialize with empty array
+      // Once the types are updated, we can fetch real availability data
       setAvailability([]);
 
     } catch (error) {
@@ -102,10 +102,10 @@ const AvailabilitySettings: React.FC = () => {
       setLoading(true);
 
       // For now, just show success message
-      // The actual database operations will work once types are updated
+      // Once types are updated, we can implement real database operations
       toast({
         title: "Success",
-        description: "Availability settings saved successfully",
+        description: "Availability settings will be saved once database types are updated",
       });
 
     } catch (error) {
