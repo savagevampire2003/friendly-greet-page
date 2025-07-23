@@ -75,8 +75,20 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctorId, onBack }) => {
   const fetchAvailableSlots = async () => {
     if (!doctor) return;
 
-    // For now, show empty slots since RPC function may not exist yet
-    setAvailableSlots([]);
+    try {
+      const { data, error } = await supabase
+        .rpc('get_available_slots', {
+          p_doctor_id: doctor.id,
+          p_date: selectedDate
+        });
+
+      if (error) throw error;
+      setAvailableSlots(data || []);
+    } catch (error) {
+      console.error('Error fetching available slots:', error);
+      // Show empty slots if function fails
+      setAvailableSlots([]);
+    }
   };
 
   const bookAppointment = async () => {
