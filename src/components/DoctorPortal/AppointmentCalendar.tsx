@@ -124,8 +124,8 @@ const AppointmentCalendar: React.FC = () => {
         updated_at: new Date().toISOString()
       };
       
-      // Add meeting link for confirmed appointments
-      if (newStatus === 'confirmed') {
+      // Add meeting link for scheduled appointments that are being updated
+      if (newStatus === 'scheduled') {
         updateData.meeting_link = `https://meet.google.com/new`; // Placeholder meeting link
       }
 
@@ -146,7 +146,7 @@ const AppointmentCalendar: React.FC = () => {
         let notificationTitle = '';
         let notificationMessage = '';
         
-        if (newStatus === 'confirmed') {
+        if (newStatus === 'scheduled') {
           notificationTitle = 'Appointment Confirmed';
           notificationMessage = `Your appointment for ${appointment.appointment_date} at ${appointment.appointment_time} has been confirmed. Meeting link has been provided.`;
         } else if (newStatus === 'cancelled') {
@@ -178,10 +178,8 @@ const AppointmentCalendar: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed':
+      case 'scheduled':
         return 'bg-green-500';
-      case 'pending':
-        return 'bg-yellow-500';
       case 'completed':
         return 'bg-blue-500';
       case 'cancelled':
@@ -258,49 +256,38 @@ const AppointmentCalendar: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="flex gap-2 flex-wrap">
-                    {appointment.status === 'scheduled' && (
-                      <>
-                        <Button
-                          size="sm"
-                          onClick={() => updateAppointmentStatus(appointment.id, 'confirmed')}
-                        >
-                          Confirm
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateAppointmentStatus(appointment.id, 'cancelled')}
-                        >
-                          Cancel
-                        </Button>
-                      </>
-                    )}
-
-                    {appointment.status === 'confirmed' && (
-                      <>
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            toast({
-                              title: "Video Consultation",
-                              description: "Meeting link functionality will be available soon",
-                            });
-                          }}
-                        >
-                          <Video className="h-4 w-4 mr-1" />
-                          Start Meeting
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateAppointmentStatus(appointment.id, 'completed')}
-                        >
-                          Mark Complete
-                        </Button>
-                      </>
-                    )}
-                  </div>
+                   <div className="flex gap-2 flex-wrap">
+                     {appointment.status === 'scheduled' && (
+                       <>
+                         <Button
+                           size="sm"
+                           onClick={() => {
+                             toast({
+                               title: "Video Consultation",
+                               description: "Meeting link functionality will be available soon",
+                             });
+                           }}
+                         >
+                           <Video className="h-4 w-4 mr-1" />
+                           Start Meeting
+                         </Button>
+                         <Button
+                           size="sm"
+                           variant="outline"
+                           onClick={() => updateAppointmentStatus(appointment.id, 'completed')}
+                         >
+                           Mark Complete
+                         </Button>
+                         <Button
+                           size="sm"
+                           variant="outline"
+                           onClick={() => updateAppointmentStatus(appointment.id, 'cancelled')}
+                         >
+                           Cancel
+                         </Button>
+                       </>
+                     )}
+                   </div>
                 </div>
               ))}
             </div>
