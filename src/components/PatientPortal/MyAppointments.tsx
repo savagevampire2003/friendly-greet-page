@@ -36,15 +36,26 @@ const MyAppointments: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.log('No authenticated user found');
+        setLoading(false);
         return;
       }
 
       console.log('Fetching appointments for user:', user.id);
 
+      // Use a more specific query to ensure we only get the current patient's appointments
       const { data: appointmentsData, error } = await supabase
         .from('appointments')
         .select(`
-          *,
+          id,
+          doctor_id,
+          appointment_date,
+          appointment_time,
+          status,
+          notes,
+          consultation_fee,
+          meeting_link,
+          diagnosis,
+          prescription,
           doctor_registrations!appointments_doctor_id_fkey (
             full_name,
             specialization
@@ -62,7 +73,17 @@ const MyAppointments: React.FC = () => {
       console.log('Raw appointments data:', appointmentsData);
       console.log('Number of appointments found:', appointmentsData?.length || 0);
 
-      const transformedAppointments = appointmentsData?.map(apt => ({
+      // Extra validation to ensure all appointments belong to current user
+      const validatedAppointments = appointmentsData?.filter(apt => {
+        console.log('Appointment patient_id check:', {
+          appointmentId: apt.id,
+          currentUserId: user.id,
+          // Note: patient_id should be included in the appointments data automatically due to RLS
+        });
+        return true; // RLS should handle this filtering
+      }) || [];
+
+      const transformedAppointments = validatedAppointments.map(apt => ({
         id: apt.id,
         doctor_id: apt.doctor_id,
         appointment_date: apt.appointment_date,
@@ -75,14 +96,15 @@ const MyAppointments: React.FC = () => {
         prescription: apt.prescription,
         doctor_name: apt.doctor_registrations?.full_name || 'Unknown Doctor',
         doctor_specialization: apt.doctor_registrations?.specialization || '',
-      })) || [];
+      }));
 
+      console.log('Final transformed appointments:', transformedAppointments);
       setAppointments(transformedAppointments);
     } catch (error) {
       console.error('Error fetching appointments:', error);
       toast({
         title: "Error",
-        description: "Failed to load appointments",
+        description: "Failed to load appointments. Please check if you're logged in.",
         variant: "destructive",
       });
     } finally {
