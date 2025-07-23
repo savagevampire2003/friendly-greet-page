@@ -114,7 +114,7 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctorId, onBack }) => {
           patient_id: user.id,
           appointment_date: selectedDate,
           appointment_time: selectedSlot,
-          status: 'pending',
+          status: 'scheduled',
           consultation_fee: 100, // Default fee for now
           consultation_type: 'video'
         });
