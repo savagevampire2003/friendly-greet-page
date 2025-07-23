@@ -4,6 +4,7 @@ import BookAppointment from './BookAppointment';
 import Profile from './Profile';
 import DoctorSearch from './DoctorSearch';
 import DoctorProfile from './DoctorProfile';
+import MyAppointments from './MyAppointments';
 
 const PatientTabs: React.FC = () => {
   const [selectedDoctorId, setSelectedDoctorId] = useState<string | null>(null);
@@ -23,12 +24,16 @@ const PatientTabs: React.FC = () => {
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-8">
       <TabsList className="mb-4">
         <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+        <TabsTrigger value="appointments">My Appointments</TabsTrigger>
         <TabsTrigger value="doctors">Find Doctors</TabsTrigger>
         <TabsTrigger value="book">Book Appointment</TabsTrigger>
         <TabsTrigger value="profile">Profile</TabsTrigger>
       </TabsList>
       <TabsContent value="dashboard">
         <div className="p-4">Welcome to your dashboard! (Summary, quick actions, etc.)</div>
+      </TabsContent>
+      <TabsContent value="appointments">
+        <MyAppointments />
       </TabsContent>
       <TabsContent value="doctors">
         <DoctorSearch onDoctorSelect={handleDoctorSelect} />

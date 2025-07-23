@@ -5,6 +5,7 @@ import { Badge } from '../ui/badge';
 import { Calendar, Clock, User, DollarSign, Video } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '../ui/use-toast';
+import { useNotifications } from '../../hooks/useNotifications';
 
 interface Appointment {
   id: string;
@@ -24,6 +25,7 @@ const AppointmentCalendar: React.FC = () => {
     new Date().toISOString().split('T')[0]
   );
   const { toast } = useToast();
+  const { createNotification } = useNotifications();
 
   useEffect(() => {
     fetchAppointments();
@@ -86,12 +88,41 @@ const AppointmentCalendar: React.FC = () => {
 
   const updateAppointmentStatus = async (appointmentId: string, newStatus: string) => {
     try {
+      // Get appointment details for notification
+      const appointment = appointments.find(apt => apt.id === appointmentId);
+      
+      const updateData: any = { status: newStatus };
+      
+      // Add meeting link for confirmed appointments
+      if (newStatus === 'confirmed') {
+        updateData.meeting_link = `https://meet.google.com/new`; // Placeholder meeting link
+      }
+
       const { error } = await supabase
         .from('appointments')
-        .update({ status: newStatus })
+        .update(updateData)
         .eq('id', appointmentId);
 
       if (error) throw error;
+
+      // Send notification to patient
+      if (appointment) {
+        let notificationTitle = '';
+        let notificationMessage = '';
+        
+        if (newStatus === 'confirmed') {
+          notificationTitle = 'Appointment Confirmed';
+          notificationMessage = `Your appointment for ${appointment.appointment_date} at ${appointment.appointment_time} has been confirmed. Meeting link has been provided.`;
+        } else if (newStatus === 'cancelled') {
+          notificationTitle = 'Appointment Cancelled';
+          notificationMessage = `Your appointment for ${appointment.appointment_date} at ${appointment.appointment_time} has been cancelled.`;
+        } else if (newStatus === 'completed') {
+          notificationTitle = 'Appointment Completed';
+          notificationMessage = `Your appointment has been completed. Please check for any follow-up instructions.`;
+        }
+        
+        await createNotification(appointment.patient_id, notificationTitle, notificationMessage, 'appointment');
+      }
 
       toast({
         title: "Success",
@@ -192,7 +223,7 @@ const AppointmentCalendar: React.FC = () => {
                   )}
 
                   <div className="flex gap-2 flex-wrap">
-                    {appointment.status === 'pending' && (
+                    {appointment.status === 'scheduled' && (
                       <>
                         <Button
                           size="sm"
