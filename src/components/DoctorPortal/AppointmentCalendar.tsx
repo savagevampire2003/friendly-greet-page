@@ -46,12 +46,12 @@ const AppointmentCalendar: React.FC = () => {
 
       if (doctorError) throw doctorError;
 
-      // Get appointments for the selected date
+      // Get appointments for the selected date with patient profile data
       const { data: appointmentsData, error: appointmentsError } = await supabase
         .from('appointments')
         .select(`
           *,
-          profiles!appointments_patient_id_fkey (
+          profiles!inner(
             full_name,
             email
           )
@@ -88,21 +88,36 @@ const AppointmentCalendar: React.FC = () => {
 
   const updateAppointmentStatus = async (appointmentId: string, newStatus: string) => {
     try {
+      console.log('Updating appointment status:', { appointmentId, newStatus });
+      
+      // Get current user info for debugging
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Current user:', user?.id);
+      
       // Get appointment details for notification
       const appointment = appointments.find(apt => apt.id === appointmentId);
+      console.log('Found appointment:', appointment);
       
-      const updateData: any = { status: newStatus };
+      const updateData: any = { 
+        status: newStatus,
+        updated_at: new Date().toISOString()
+      };
       
       // Add meeting link for confirmed appointments
       if (newStatus === 'confirmed') {
         updateData.meeting_link = `https://meet.google.com/new`; // Placeholder meeting link
       }
 
-      const { error } = await supabase
+      console.log('Update data:', updateData);
+      
+      const { data, error } = await supabase
         .from('appointments')
         .update(updateData)
-        .eq('id', appointmentId);
+        .eq('id', appointmentId)
+        .select();
 
+      console.log('Update result:', { data, error });
+      
       if (error) throw error;
 
       // Send notification to patient
