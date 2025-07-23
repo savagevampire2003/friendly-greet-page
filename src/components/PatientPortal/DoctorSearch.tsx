@@ -27,7 +27,11 @@ interface Specialty {
   name: string;
 }
 
-const DoctorSearch: React.FC = () => {
+interface DoctorSearchProps {
+  onDoctorSelect: (doctorId: string) => void;
+}
+
+const DoctorSearch: React.FC<DoctorSearchProps> = ({ onDoctorSelect }) => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
@@ -200,7 +204,10 @@ const DoctorSearch: React.FC = () => {
                 </div>
               </div>
 
-              <Button className="w-full">
+              <Button 
+                className="w-full"
+                onClick={() => onDoctorSelect(doctor.id)}
+              >
                 Book Consultation
               </Button>
             </div>
