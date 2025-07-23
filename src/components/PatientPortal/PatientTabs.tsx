@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs';
-import BookAppointment from './BookAppointment';
 import Profile from './Profile';
 import DoctorSearch from './DoctorSearch';
 import DoctorProfile from './DoctorProfile';
@@ -26,7 +25,6 @@ const PatientTabs: React.FC = () => {
         <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
         <TabsTrigger value="appointments">My Appointments</TabsTrigger>
         <TabsTrigger value="doctors">Find Doctors</TabsTrigger>
-        <TabsTrigger value="book">Book Appointment</TabsTrigger>
         <TabsTrigger value="profile">Profile</TabsTrigger>
       </TabsList>
       <TabsContent value="dashboard">
@@ -45,9 +43,6 @@ const PatientTabs: React.FC = () => {
             onBack={handleBackFromProfile} 
           />
         )}
-      </TabsContent>
-      <TabsContent value="book">
-        <BookAppointment />
       </TabsContent>
       <TabsContent value="profile">
         <Profile />
