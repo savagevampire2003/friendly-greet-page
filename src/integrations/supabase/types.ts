@@ -18,33 +18,51 @@ export type Database = {
         Row: {
           appointment_date: string
           appointment_time: string
+          consultation_fee: number | null
+          consultation_type: string | null
           created_at: string
+          diagnosis: string | null
           doctor_id: string
           id: string
+          meeting_link: string | null
           notes: string | null
           patient_id: string
+          payment_status: string | null
+          prescription: string | null
           status: string
           updated_at: string
         }
         Insert: {
           appointment_date: string
           appointment_time: string
+          consultation_fee?: number | null
+          consultation_type?: string | null
           created_at?: string
+          diagnosis?: string | null
           doctor_id: string
           id?: string
+          meeting_link?: string | null
           notes?: string | null
           patient_id: string
+          payment_status?: string | null
+          prescription?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
           appointment_date?: string
           appointment_time?: string
+          consultation_fee?: number | null
+          consultation_type?: string | null
           created_at?: string
+          diagnosis?: string | null
           doctor_id?: string
           id?: string
+          meeting_link?: string | null
           notes?: string | null
           patient_id?: string
+          payment_status?: string | null
+          prescription?: string | null
           status?: string
           updated_at?: string
         }
@@ -386,7 +404,13 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_available_slots: {
+        Args: { p_doctor_id: string; p_date: string }
+        Returns: {
+          slot_time: string
+          is_available: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
