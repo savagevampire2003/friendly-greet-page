@@ -150,6 +150,60 @@ export type Database = {
           },
         ]
       }
+      doctors_availability: {
+        Row: {
+          consultation_fee: number | null
+          created_at: string
+          day_of_week: number
+          doctor_id: string
+          end_time: string
+          id: string
+          is_active: boolean
+          slot_duration_minutes: number
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          consultation_fee?: number | null
+          created_at?: string
+          day_of_week: number
+          doctor_id: string
+          end_time: string
+          id?: string
+          is_active?: boolean
+          slot_duration_minutes?: number
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          consultation_fee?: number | null
+          created_at?: string
+          day_of_week?: number
+          doctor_id?: string
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          slot_duration_minutes?: number
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctors_availability_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "approved_doctors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doctors_availability_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "doctor_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical_analyses: {
         Row: {
           analysis_result: Json | null
