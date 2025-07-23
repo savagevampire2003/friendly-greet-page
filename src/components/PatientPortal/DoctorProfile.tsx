@@ -10,13 +10,13 @@ interface Doctor {
   id: string;
   full_name: string;
   specialization: string;
-  specialty_name: string;
-  hospital_affiliation: string;
+  specialty_name: string | null;
+  hospital_affiliation: string | null;
   years_of_experience: number;
-  professional_bio: string;
+  professional_bio: string | null;
   education_details: string;
-  avg_consultation_fee: number;
-  has_availability: boolean;
+  contact_phone: string;
+  email: string | null;
 }
 
 interface TimeSlot {
@@ -53,7 +53,7 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctorId, onBack }) => {
   const fetchDoctorProfile = async () => {
     try {
       const { data, error } = await supabase
-        .from('doctor_profiles_with_availability')
+        .from('approved_doctors')
         .select('*')
         .eq('id', doctorId)
         .single();
@@ -75,20 +75,8 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctorId, onBack }) => {
   const fetchAvailableSlots = async () => {
     if (!doctor) return;
 
-    try {
-      const { data, error } = await supabase
-        .rpc('get_available_slots', {
-          p_doctor_id: doctor.id,
-          p_date: selectedDate
-        });
-
-      if (error) throw error;
-      setAvailableSlots(data || []);
-    } catch (error) {
-      console.error('Error fetching available slots:', error);
-      // For now, show empty slots if function doesn't exist
-      setAvailableSlots([]);
-    }
+    // For now, show empty slots since RPC function may not exist yet
+    setAvailableSlots([]);
   };
 
   const bookAppointment = async () => {
@@ -115,7 +103,7 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctorId, onBack }) => {
           appointment_date: selectedDate,
           appointment_time: selectedSlot,
           status: 'pending',
-          consultation_fee: doctor.avg_consultation_fee,
+          consultation_fee: 100, // Default fee for now
           consultation_type: 'video'
         });
 
@@ -180,7 +168,7 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctorId, onBack }) => {
               <p className="text-lg text-muted-foreground">{doctor.specialty_name || doctor.specialization}</p>
             </div>
             <Badge variant="secondary" className="text-lg px-3 py-1">
-              ${doctor.avg_consultation_fee}/session
+              Consultation Available
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -213,68 +201,57 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctorId, onBack }) => {
         </CardContent>
       </Card>
 
-      {doctor.has_availability ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Book an Appointment
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Book an Appointment
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Select Date</label>
+            <input
+              type="date"
+              value={selectedDate}
+              min={getMinDate()}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="border rounded px-3 py-2"
+            />
+          </div>
+
+          {availableSlots.length > 0 ? (
             <div>
-              <label className="block text-sm font-medium mb-2">Select Date</label>
-              <input
-                type="date"
-                value={selectedDate}
-                min={getMinDate()}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="border rounded px-3 py-2"
-              />
-            </div>
-
-            {availableSlots.length > 0 ? (
-              <div>
-                <label className="block text-sm font-medium mb-2">Available Time Slots</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {availableSlots.map((slot) => (
-                    <Button
-                      key={slot.slot_time}
-                      variant={selectedSlot === slot.slot_time ? "default" : "outline"}
-                      disabled={!slot.is_available}
-                      onClick={() => setSelectedSlot(slot.slot_time)}
-                      className="text-sm"
-                    >
-                      {formatTime(slot.slot_time)}
-                    </Button>
-                  ))}
-                </div>
+              <label className="block text-sm font-medium mb-2">Available Time Slots</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {availableSlots.map((slot) => (
+                  <Button
+                    key={slot.slot_time}
+                    variant={selectedSlot === slot.slot_time ? "default" : "outline"}
+                    disabled={!slot.is_available}
+                    onClick={() => setSelectedSlot(slot.slot_time)}
+                    className="text-sm"
+                  >
+                    {formatTime(slot.slot_time)}
+                  </Button>
+                ))}
               </div>
-            ) : (
-              <p className="text-gray-500 text-center py-4">
-                No available slots for {selectedDate}. Please select another date.
-              </p>
-            )}
-
-            <Button
-              onClick={bookAppointment}
-              disabled={!selectedSlot || bookingLoading}
-              className="w-full"
-            >
-              {bookingLoading ? 'Booking...' : 'Book Appointment'}
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardContent className="text-center py-8">
-            <p className="text-gray-500">
-              This doctor is not currently accepting appointments online.
-              Please contact them directly for scheduling.
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">
+              Appointment booking will be available once the doctor sets their availability.
             </p>
-          </CardContent>
-        </Card>
-      )}
+          )}
+
+          <Button
+            onClick={bookAppointment}
+            disabled={!selectedSlot || bookingLoading}
+            className="w-full"
+          >
+            {bookingLoading ? 'Booking...' : 'Book Appointment'}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };

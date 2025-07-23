@@ -56,8 +56,7 @@ const AvailabilitySettings: React.FC = () => {
       
       setDoctorId(doctorData.id);
 
-      // For now, just initialize with empty array due to type issues
-      // The types will be updated in next deployment
+      // For now, initialize with empty array - the database schema exists but TypeScript types aren't updated yet
       setAvailability([]);
 
     } catch (error) {
